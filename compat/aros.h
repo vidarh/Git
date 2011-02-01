@@ -77,7 +77,6 @@ static inline char *inet_ntoa(struct in_addr in)
 
 static inline int chk_abort()
 {
-  Delay(30);
   /* Check & clear CTRL_C signal */
   return CheckSignal(SIGBREAKF_CTRL_C);
 }
