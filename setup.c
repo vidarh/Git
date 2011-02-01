@@ -415,10 +415,17 @@ static const char *setup_nongit(const char *cwd, int *nongit_ok)
 static dev_t get_device_or_die(const char *path, const char *prefix)
 {
 	struct stat buf;
-	if (stat(path, &buf))
+	if (path[0] == '.' && !path[1]) {
+	  if (stat("/", &buf))
 		die_errno("failed to stat '%s%s%s'",
-				prefix ? prefix : "",
-				prefix ? "/" : "", path);
+				  prefix ? prefix : "",
+				  prefix ? "/" : "", "/");
+	} else {
+	  if (stat(path, &buf))
+		die_errno("failed to stat '%s%s%s'",
+				  prefix ? prefix : "",
+				  prefix ? "/" : "", path);
+	}
 	return buf.st_dev;
 }
 

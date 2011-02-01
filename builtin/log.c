@@ -271,6 +271,10 @@ static int cmd_log_walk(struct rev_info *rev)
 		}
 		free_commit_list(commit->parents);
 		commit->parents = NULL;
+
+#ifdef CHKABORT
+  	    if (chk_abort()) break;
+#endif
 	}
 	if (rev->diffopt.output_format & DIFF_FORMAT_CHECKDIFF &&
 	    DIFF_OPT_TST(&rev->diffopt, CHECK_FAILED)) {

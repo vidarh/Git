@@ -249,6 +249,8 @@ uname_R := $(shell sh -c 'uname -r 2>/dev/null || echo not')
 uname_P := $(shell sh -c 'uname -p 2>/dev/null || echo not')
 uname_V := $(shell sh -c 'uname -v 2>/dev/null || echo not')
 
+uname_S := AROS
+
 ifdef MSVC
 	# avoid the MingW and Cygwin configuration sections
 	uname_S := Windows
@@ -298,8 +300,8 @@ pathsep = :
 
 export prefix bindir sharedir sysconfdir gitwebdir
 
-CC = gcc
-AR = ar
+CC = i386-aros-gcc
+AR = i386-aros-ar
 RM = rm -f
 DIFF = diff
 TAR = tar
@@ -397,7 +399,7 @@ EXTRA_PROGRAMS =
 PROGRAMS += $(EXTRA_PROGRAMS)
 
 PROGRAM_OBJS += fast-import.o
-PROGRAM_OBJS += imap-send.o
+# PROGRAM_OBJS += imap-send.o
 PROGRAM_OBJS += shell.o
 PROGRAM_OBJS += show-index.o
 PROGRAM_OBJS += upload-pack.o
@@ -1090,6 +1092,51 @@ else
 	BASIC_CFLAGS += -Zi -MTd
 endif
 	X = .exe
+endif
+ifeq ($(uname_S),AROS)
+	pathsep = ;
+	NO_PREAD = YesPlease
+	NO_LIBGEN_H = YesPlease
+	NO_SYMLINK_HEAD = YesPlease
+	NO_IPV6 = YesPlease
+	NO_SETENV = YesPlease
+	NO_UNSETENV = YesPlease
+	NO_STRCASESTR = YesPlease
+	NO_STRLCPY = YesPlease
+	NO_MEMMEM = YesPlease
+	# NEEDS_LIBICONV = YesPlease
+	NO_ICONV = YesPlease
+	NO_C99_FORMAT = YesPlease
+	NO_STRTOUMAX = YesPlease
+	NO_STRTOULL = YesPlease
+	NO_STRTOK_R = YesPlease
+	NO_MKDTEMP = YesPlease
+	NO_MKSTEMPS = YesPlease
+	SNPRINTF_RETURNS_BOGUS = YesPlease
+	NO_SVN_TESTS = YesPlease
+	NO_PERL_MAKEMAKER = YesPlease
+	#RUNTIME_PREFIX = YesPlease
+	NO_POSIX_ONLY_PROGRAMS = YesPlease
+	NO_ST_BLOCKS_IN_STRUCT_STAT = YesPlease
+	NO_NSEC = YesPlease
+	NO_MMAP = YesPlease
+	# USE_NED_ALLOCATOR = YesPlease
+	UNRELIABLE_FSTAT = UnfortunatelyYes
+	OBJECT_CREATION_USES_RENAMES = UnfortunatelyNeedsTo
+	NO_REGEX = YesPlease
+	NO_CURL = YesPlease
+	NO_PYTHON = YesPlease
+	BLK_SHA1 = YesPlease
+	NO_PTHREADS = YesPlease
+	NO_OPENSSL = YesPlease
+	NO_SYS_SELECT_H = YesPlease
+	NO_TCLTK = YesPlease
+
+	CFLAGS=-D__BSD_VISIBLE
+	COMPAT_OBJS += compat/fnmatch/fnmatch.o compat/aros.o
+	ALL_LDFLAGS += #-laros -larosc
+	COMPAT_CFLAGS = -DHAVE_STRING_H -DHAVE_ALLOCA_H -Icompat -Icompat/fnmatch -Icompat/regex -Icompat/fnmatch
+	lib =
 endif
 ifneq (,$(findstring MINGW,$(uname_S)))
 	pathsep = ;

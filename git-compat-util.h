@@ -94,10 +94,14 @@
 #include <utime.h>
 #ifndef __MINGW32__
 #include <sys/wait.h>
+#ifndef __AROS__
 #include <sys/poll.h>
+#endif
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#ifndef __AROS__
 #include <termios.h>
+#endif
 #ifndef NO_SYS_SELECT_H
 #include <sys/select.h>
 #endif
@@ -123,6 +127,9 @@
 #endif	/* __MINGW32__ */
 #ifdef _MSC_VER
 #include "compat/msvc.h"
+#endif
+#ifdef __AROS__
+#include "compat/aros.h"
 #endif
 
 #ifndef NO_LIBGEN_H
@@ -185,6 +192,10 @@ extern char *gitbasename(char *);
 
 #ifndef is_dir_sep
 #define is_dir_sep(c) ((c) == '/')
+#endif
+
+#ifndef is_absolute_path
+#define is_absolute_path(path) ((path)[0] == '/' || has_dos_drive_prefix(path))
 #endif
 
 #ifdef __GNUC__

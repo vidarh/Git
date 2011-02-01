@@ -37,6 +37,9 @@ extern "C" {
 #endif /* C++ or ANSI C.  */
 
 #ifndef const
+# ifdef __const
+# undef __const
+# endif
 # if (defined __STDC__ && __STDC__) || defined __cplusplus
 #  define __const	const
 # else
