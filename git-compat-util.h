@@ -94,12 +94,12 @@
 #include <utime.h>
 #ifndef __MINGW32__
 #include <sys/wait.h>
-#ifndef __AROS__
+#if !defined(__AROS__) && !defined(__amigaos4__)
 #include <sys/poll.h>
 #endif
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-#ifndef __AROS__
+#if !defined( __AROS__) && !defined(__amigaos4__)
 #include <termios.h>
 #endif
 #ifndef NO_SYS_SELECT_H
@@ -128,8 +128,8 @@
 #ifdef _MSC_VER
 #include "compat/msvc.h"
 #endif
-#ifdef __AROS__
-#include "compat/aros.h"
+#if defined(__AROS__) || defined(__amigaos4__)
+#include "compat/amiga.h"
 #endif
 
 #ifndef NO_LIBGEN_H
