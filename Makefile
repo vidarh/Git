@@ -300,8 +300,8 @@ pathsep = :
 
 export prefix bindir sharedir sysconfdir gitwebdir
 
-CC = i386-aros-gcc
-AR = i386-aros-ar
+CC = i386-linux-aros-gcc
+AR = i386-linux-aros-ar
 RM = rm -f
 DIFF = diff
 TAR = tar
@@ -1127,13 +1127,13 @@ ifeq ($(uname_S),AROS)
 	NO_CURL = YesPlease
 	NO_PYTHON = YesPlease
 	BLK_SHA1 = YesPlease
-	NO_PTHREADS = YesPlease
+	# NO_PTHREADS = YesPlease
 	NO_OPENSSL = YesPlease
 	NO_SYS_SELECT_H = YesPlease
 	NO_TCLTK = YesPlease
 
 	CFLAGS=-D__BSD_VISIBLE
-	COMPAT_OBJS += compat/fnmatch/fnmatch.o compat/aros.o
+	COMPAT_OBJS += compat/fnmatch/fnmatch.o compat/amiga.o
 	ALL_LDFLAGS += #-laros -larosc
 	COMPAT_CFLAGS = -DHAVE_STRING_H -DHAVE_ALLOCA_H -Icompat -Icompat/fnmatch -Icompat/regex -Icompat/fnmatch
 	lib =
