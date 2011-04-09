@@ -102,6 +102,11 @@ static char *get_repo_path(const char *repo, int *is_bundle)
 		}
 	}
 
+#ifdef AMIGA
+#warning FIXME
+	if (strchr(repo,':')) return 0;
+#endif
+
 	for (i = 0; i < ARRAY_SIZE(bundle_suffix); i++) {
 		const char *path;
 		path = mkpath("%s%s", repo, bundle_suffix[i]);
