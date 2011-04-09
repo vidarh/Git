@@ -271,6 +271,14 @@ static int git_tcp_connect_sock(char *host, int flags)
 	if (flags & CONNECT_VERBOSE)
 		fprintf(stderr, "Looking up %s ... ", host);
 
+#ifdef AMIGA
+	if (!SocketBase) {
+	  SocketBase = OpenLibrary("bsdsocket.library",0);
+	  if (!SocketBase) {
+		die("Unable to open bsdsocket.library");
+	  }
+	}
+#endif
 	he = gethostbyname(host);
 	if (!he)
 		die("Unable to look up %s (%s)", host, hstrerror(h_errno));
@@ -282,7 +290,6 @@ static int git_tcp_connect_sock(char *host, int flags)
 			die("Unknown port %s", port);
 		nport = se->s_port;
 	}
-
 	if (flags & CONNECT_VERBOSE)
 		fprintf(stderr, "done.\nConnecting to %s (port %s) ... ", host, port);
 
