@@ -5,9 +5,16 @@
  * symlink to a directory, we do not want to say it is a directory when
  * dealing with tracked content in the working tree.
  */
+
+/* FIXME: Amiga - if contains ':': need to check for volume in assign/volume list
+   to avoid opening of a requester. Current hack prevents referring to local
+   repositories using an assign or volume */
 int is_directory(const char *path)
 {
 	struct stat st;
+#ifdef AMIGA
+	if (strchr(path,':')) return 0;
+#endif
 	return (!stat(path, &st) && S_ISDIR(st.st_mode));
 }
 
