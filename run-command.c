@@ -8,7 +8,7 @@ static inline void close_pair(int fd[2])
 	close(fd[1]);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(AMIGA)
 static inline void dup_devnull(int to)
 {
 	int fd = open("/dev/null", O_RDWR);
@@ -50,7 +50,7 @@ static const char **prepare_shell_cmd(const char **argv)
 	return nargv;
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(AMIGA)
 static int execv_shell_cmd(const char **argv)
 {
 	const char **nargv = prepare_shell_cmd(argv);
@@ -61,7 +61,7 @@ static int execv_shell_cmd(const char **argv)
 }
 #endif
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(AMIGA)
 static int child_err = 2;
 static int child_notifier = -1;
 
@@ -195,7 +195,7 @@ fail_pipe:
 
 	trace_argv_printf(cmd->argv, "trace: run_command:");
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(AMIGA)
 {
 	int notify_pipe[2];
 	if (pipe(notify_pipe))
@@ -351,8 +351,14 @@ fail_pipe:
 		cmd->argv = prepare_shell_cmd(cmd->argv);
 	}
 
+#ifdef WIN32
 	cmd->pid = mingw_spawnvpe(cmd->argv[0], cmd->argv, env, cmd->dir,
 				  fhin, fhout, fherr);
+#else
+#warning FIXME: spawnvpe missing
+	fprintf(stderr,"FIXME: Missing spawnvpe\n");
+	cmd->pid = 0;
+#endif
 	failed_errno = errno;
 	if (cmd->pid < 0 && (!cmd->silent_exec_failure || errno != ENOENT))
 		error("cannot spawn %s: %s", cmd->argv[0], strerror(errno));
