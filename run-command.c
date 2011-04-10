@@ -355,9 +355,8 @@ fail_pipe:
 	cmd->pid = mingw_spawnvpe(cmd->argv[0], cmd->argv, env, cmd->dir,
 				  fhin, fhout, fherr);
 #else
-#warning FIXME: spawnvpe missing
-	fprintf(stderr,"FIXME: Missing spawnvpe\n");
-	cmd->pid = 0;
+	cmd->pid = amiga_spawnvpe(cmd->argv[0], cmd->argv, env, cmd->dir,
+				  fhin, fhout, fherr);
 #endif
 	failed_errno = errno;
 	if (cmd->pid < 0 && (!cmd->silent_exec_failure || errno != ENOENT))
