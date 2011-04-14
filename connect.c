@@ -272,6 +272,14 @@ static int git_tcp_connect_sock(char *host, int flags)
 		fprintf(stderr, "Looking up %s ... ", host);
 
 #ifdef AMIGA
+	/* FIXME: A clean way of doing this on startup/exit?
+	   How does AROS auto-open work? */
+	/* On AROS it should be auto-opened. On AmigaOS it
+	   won't. However, we try to open it here in any 
+	   case instead of using separate code for each,
+	   as it won't do any harm, and if we don't we'll
+	   crash if bsdsocket.library isn't present
+	 */
 	if (!SocketBase) {
 	  SocketBase = OpenLibrary("bsdsocket.library",0);
 	  if (!SocketBase) {
