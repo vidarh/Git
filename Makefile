@@ -1093,6 +1093,7 @@ else
 endif
 	X = .exe
 endif
+# FIXME: Verify which ones of these are actually needed.
 ifeq ($(uname_S),AROS)
 	pathsep = ;
 	NO_PREAD = YesPlease
@@ -1123,18 +1124,20 @@ ifeq ($(uname_S),AROS)
 	# USE_NED_ALLOCATOR = YesPlease
 	UNRELIABLE_FSTAT = UnfortunatelyYes
 	OBJECT_CREATION_USES_RENAMES = UnfortunatelyNeedsTo
-	NO_REGEX = YesPlease
-	NO_CURL = YesPlease
+	#NO_REGEX = YesPlease
+	#NO_CURL = YesPlease
 	NO_PYTHON = YesPlease
 	BLK_SHA1 = YesPlease
 	# NO_PTHREADS = YesPlease
-	NO_OPENSSL = YesPlease
+	# NO_OPENSSL = YesPlease
 	NO_SYS_SELECT_H = YesPlease
 	NO_TCLTK = YesPlease
-
+	NEEDS_CRYPTO_WITH_SSL = YesPlease
 	CFLAGS=-D__BSD_VISIBLE
 	COMPAT_OBJS += compat/fnmatch/fnmatch.o compat/amiga.o
 	ALL_LDFLAGS += #-laros -larosc
+	# For some reason the order is vital here for AROS:
+	EXTLIBS += -lcurl -lssl -lcrypto
 	COMPAT_CFLAGS = -DHAVE_STRING_H -DHAVE_ALLOCA_H -Icompat -Icompat/fnmatch -Icompat/regex -Icompat/fnmatch
 	lib =
 endif
