@@ -121,12 +121,14 @@ char **make_augmented_environ(const char *const *vars)
 static char *lookup_prog(const char *dir, const char *cmd, int isexe, int exe_only)
 {
 #warning FIXME: lookup_prog
-#if 0
+#define MAX_PATH 256
 	char path[MAX_PATH];
-	snprintf(path, sizeof(path), "%s/%s.exe", dir, cmd);
-
-	if (!isexe && access(path, F_OK) == 0)
-		return xstrdup(path);
+	snprintf(path, sizeof(path), "%s%s", dir, cmd);
+	fprintf(stderr,"Trying %s\n",path);
+	if (access(path, F_OK) == 0) 
+	  return xstrdup(path);
+	fprintf(stderr,"Failed\n");
+#if 0
 	path[strlen(path)-4] = '\0';
 	if ((!exe_only || isexe) && access(path, F_OK) == 0)
 		if (!(GetFileAttributes(path) & FILE_ATTRIBUTE_DIRECTORY))
@@ -137,22 +139,20 @@ static char *lookup_prog(const char *dir, const char *cmd, int isexe, int exe_on
 
 /*
  * Determines the absolute path of cmd using the split path in path.
- * If cmd contains a slash or backslash, no lookup is performed.
+ * If cmd contains a slash or colon, no lookup is performed.
  */
 static char *path_lookup(const char *cmd, char **path, int exe_only)
 {
 	char *prog = NULL;
 	int len = strlen(cmd);
-	int isexe = len >= 4 && !strcasecmp(cmd+len-4, ".exe");
 
-	if (strchr(cmd, '/') || strchr(cmd, '\\'))
-		prog = xstrdup(cmd);
+	if (strchr(cmd, '/') || strchr(cmd, ':'))
+	  prog = xstrdup(cmd);
 
 	while (!prog && *path)
-		prog = lookup_prog(*path++, cmd, isexe, exe_only);
+	  prog = lookup_prog(*path++, cmd, 0, exe_only);
 
 	return prog;
-	return 0;
 }
 
 
@@ -200,7 +200,7 @@ static char **get_path_split(void)
 {
 	char *p, **path, *envpath = getenv("PATH");
 	int i, n = 0;
-
+	fprintf(stderr,"envpath: %s\n",envpath);
 	if (!envpath || !*envpath)
 		return NULL;
 
@@ -217,13 +217,18 @@ static char **get_path_split(void)
 	if (!n)
 		return NULL;
 
-	path = xmalloc((n+1)*sizeof(char *));
+	path = xmalloc((n+2)*sizeof(char *));
+	path[0] = xstrdup(""); /* "current directory" */
 	p = envpath;
-	i = 0;
+	i = 1;
 	do {
-		if (*p)
-			path[i++] = xstrdup(p);
-		p = p+strlen(p)+1;
+	  if (*p) {
+		char * tmp = strchr(p,'/');
+		/* FIXME: This doesn't handle just a volume - for that we need to allocate a separate string */
+		if (tmp) *tmp = ':'; /* Volume comes first in Amiga path name */
+		path[i++] = xstrdup(p);
+	  }
+	  p = p+strlen(p)+1;
 	} while (i < n);
 	path[i] = NULL;
 
@@ -251,6 +256,7 @@ static pid_t amiga_spawnve_fd(const char *cmd, const char **argv, char **env,
 {
 #warning spawnve_fd
   fprintf(stderr,"amiga_spawnve_fd not implemented\n");
+  return 1; // FIXME: Intentionally pretty much guaranteed to crash
 #if 0
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
